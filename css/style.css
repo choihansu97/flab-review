@@ -1,0 +1,37 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.list-nav {
+    display: flex;
+    justify-content: center;
+    column-gap: 16px;
+    padding: 16px;
+    border-bottom: 1px solid #dadada;
+}
+
+.nav-item {
+    list-style: none;
+}
+
+.hash {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    color: #222;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    letter-spacing: -1px;
+}
+
+.hash:hover {
+    background: #f2f4f6;
+}
+
+#hash-app {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
