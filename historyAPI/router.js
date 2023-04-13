@@ -1,74 +1,69 @@
-export function CreateRouter() {
-    const routes = [];
+export class CreateRouter {
+    constructor() {
+        this.routes = [];
+        this.notFoundRoute = null;
+    }
 
-    const router = {
-        addRoute(fragment, component) {
-            const regexFragment = fragment.replace(/:\w+/g, "([^\\/]+)");
-            const regex = new RegExp(`^${regexFragment}\\/?$`);
+    addRoute(fragment, component) {
+        const params = fragment.match(/:\w+/g)?.map(param => param.slice(1)) || [];
+        const regexFragment = fragment.replace(/:\w+/g, "([^\\/]+)");
+        const regex = new RegExp(`^${regexFragment}\\/?$`);
+        this.routes.push({fragment, regex, component, params});
+        return this;
+    }
 
-            routes.push({fragment, regex, component});
-            return this;
-        },
+    setNotFound(component) {
+        this.notFoundRoute = {fragment: "*", component};
+        return this;
+    }
 
-        setNotFound(component) {
-            routes.push({fragment: "*", component});
-            return this;
-        },
+    navigate(pathname) {
+        window.history.pushState(null, null, pathname);
+        this.checkRoute();
+        return this;
+    }
 
-        navigate(path) {
-            window.history.pushState(null, null, path);
-            return this;
-        },
+    routeParams(currentRoute, pathName) {
+        const matches = pathName.match(currentRoute.regex);
 
-        checkRoute() {
-            const currentRoute =
-                routes.find(
-                    (route) => {
-                        const match = window.location.pathname.match(route.regex);
+        matches.shift();
 
-                        if (match) {
-                            const params = match.slice(1);
-                            const paramNames = route.fragment.match(/:\w+/g);
-                            if (paramNames) {
-                                const paramMap = paramNames.reduce(
-                                    (result, paramName, i) => ({
-                                        ...result,
-                                        [paramName.slice(1)]: params[i],
-                                    }), {});
-                                route.paramMap = paramMap;
-                            }
-                            return true;
-                        }
-                        return false;
-                    }
-                ) || routes.find((route) => route.fragment === "*");
+        const params = {};
+        matches.forEach((paramValue, index) => {
+            const paramName = currentRoute.params[index];
+            params[paramName] = paramValue;
+        });
 
-            if (currentRoute.paramMap) {
-                const id = currentRoute.paramMap.id;
-                return currentRoute.component(currentRoute.paramMap);
-            }
-            currentRoute.component();
-        },
+        return params;
+    }
 
-        start() {
-            window.addEventListener("click", (event) => {
-                if (event.target.nodeName === "A" && event.target.hasAttribute(
-                    "href")) {
-                    event.preventDefault();
+    checkRoute() {
+        const path = window.location.pathname;
+        let currentRoute = this.routes.find((route) => route.regex.test(path));
 
-                    this.navigate(event.target.href);
-                    this.checkRoute();
-                }
-            });
-
-            window.addEventListener("popstate", () => {
-                this.checkRoute();
-            });
-
-            this.checkRoute();
-            return this;
+        if (!currentRoute) {
+            currentRoute = this.notFoundRoute;
         }
-    };
 
-    return router;
+        const urlParams = this.routeParams(currentRoute, path);
+        currentRoute.component(urlParams);
+    }
+
+    start() {
+        window.addEventListener('click', (e) => {
+            const target = e.target.closest('a');
+            if (target) {
+                e.preventDefault();
+                this.navigate(target.href);
+            }
+        });
+
+        window.addEventListener('popstate', () => {
+            this.checkRoute();
+        });
+
+        this.checkRoute();
+    }
 }
+
+
