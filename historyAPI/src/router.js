@@ -5,15 +5,16 @@ export class CreateRouter {
     }
 
     addRoute(fragment, component) {
-        const params = fragment.match(/:\w+/g)?.map(param => param.slice(1)) || [];
-        const regexFragment = fragment.replace(/:\w+/g, "([^\\/]+)");
+        const params =
+            fragment.match(/:\w+/g)?.map((param) => param.slice(1)) || [];
+        const regexFragment = fragment.replace(/:\w+/g, '([^\\/]+)');
         const regex = new RegExp(`^${regexFragment}\\/?$`);
-        this.routes.push({fragment, regex, component, params});
+        this.routes.push({ fragment, regex, component, params });
         return this;
     }
 
     setNotFound(component) {
-        this.notFoundRoute = {fragment: "*", component};
+        this.notFoundRoute = { fragment: '*', component };
         return this;
     }
 
@@ -65,5 +66,3 @@ export class CreateRouter {
         this.checkRoute();
     }
 }
-
-
