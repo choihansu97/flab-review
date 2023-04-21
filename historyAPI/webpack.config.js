@@ -1,18 +1,23 @@
+const express = require('express');
+const app = express();
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const PrettierPlugin = require("prettier-webpack-plugin");
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs')
+const swaggerDocument = YAML.load('./swagger.yaml');
 
-const { resolve } = require("path");
+const path = require("path");
 
 module.exports = {
-  mode: "none",
+  mode: "development",
   entry: {
     index: "./src/index.js",
     router: "./src/router.js",
   },
 
   output: {
-    path: resolve(__dirname, "./src/dist"),
+    path: __dirname + "/src/dist",
     publicPath: "/",
     filename: "[name].js",
   },
@@ -22,12 +27,21 @@ module.exports = {
     hot: true,
     open: true,
     historyApiFallback: true,
+
+    onBeforeSetupMiddleware: (devServer) => {
+      devServer.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    },
   },
 
   plugins: [
     new HtmlWebpackPlugin({
       filename: "index.html",
       template: "./public/index.html",
+      inject: true,
+    }),
+    new HtmlWebpackPlugin({
+      filename: "tech.html",
+      template: "./src/pages/tech.html",
       inject: true,
     }),
     new PrettierPlugin({
