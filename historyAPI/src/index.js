@@ -1,4 +1,9 @@
 import { CreateRouter } from './router.js';
+import { setupWorker } from 'msw';
+import { handlers } from './handlers';
+
+const worker = setupWorker(...handlers);
+worker.start();
 
 const router = new CreateRouter();
 const container = document.querySelector('#app');
