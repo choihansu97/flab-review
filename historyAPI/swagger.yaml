@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: TossClone API
+  description: TossClone API
+servers:
+  - url: http://localhost:5050
+
+paths:
+  /tech:
+    get:
+      summary: Get tech news
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    thumbnail:
+                      type: string
+                    title:
+                      type: string
+                    content:
+                      type: string
+                    createDate:
+                      type: string
+
+  /article/{id}:
+    get:
+      summary: Get news detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  thumbnail:
+                    type: string
+                  title:
+                    type: string
+                  content:
+                    type: string
+                  createDate:
+                    type: string

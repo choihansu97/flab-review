@@ -1,0 +1,11 @@
+<div>
+    <h2>테스트</h2>
+    <ul id="list"></ul>
+</div>
+<script>
+    const list = document.querySelector('#list');
+    fetch('/tech')
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .catch((error) => console.log(error));
+</script>
