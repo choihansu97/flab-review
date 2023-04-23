@@ -1,13 +1,6 @@
-const express = require('express');
-const app = express();
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const PrettierPlugin = require("prettier-webpack-plugin");
-const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs')
-const swaggerDocument = YAML.load('./swagger.yaml');
-
-const path = require("path");
 
 module.exports = {
   mode: "development",
@@ -27,10 +20,6 @@ module.exports = {
     hot: true,
     open: true,
     historyApiFallback: true,
-
-    onBeforeSetupMiddleware: (devServer) => {
-      devServer.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-    },
   },
 
   plugins: [
